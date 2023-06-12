@@ -1,13 +1,9 @@
-package dao.entitiesVO;
+package dao;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
 import java.io.FileInputStream;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
+import java.io.IOException;
+import java.sql.*;
+import java.util.Properties;
 
 public abstract class BaseDAO {
     protected static Connection connection = null;

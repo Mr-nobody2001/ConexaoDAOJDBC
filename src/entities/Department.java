@@ -1,10 +1,12 @@
 package entities;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.io.Serializable;
 
 public class Department implements Serializable {
-    private static final long serialVersion = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Integer id;
     private String name;
 

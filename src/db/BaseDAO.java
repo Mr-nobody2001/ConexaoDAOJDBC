@@ -56,8 +56,8 @@ public abstract class BaseDAO {
     }
 
     private static Properties getProperties() {
-        String path = "C:\\Users\\gabri\\OneDrive\\Documentos\\Conteúdo Faculdade\\Segundo Semestre\\" +
-                "Técnicas de programação\\trabalhos\\trabalho4\\src\\files\\db.properties.txt";
+        String path = "C:\\Users\\gabri\\OneDrive\\Documentos\\Curso completo Java\\Secão 21\\jdbc\\src" +
+                "\\files\\db.properties.txt";
 
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             Properties properties = new Properties();

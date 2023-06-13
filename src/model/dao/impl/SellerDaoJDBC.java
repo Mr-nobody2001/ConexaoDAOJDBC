@@ -68,7 +68,38 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        return null;
+        List<Seller> listaSeller = new ArrayList<>();
+        Map<Integer, Department> map = new TreeMap<>();
+
+        ResultSet resultSet = null;
+
+        Seller seller;
+
+        String sql = "SELECT seller.*,department.Name as DepName " +
+                "FROM seller INNER JOIN department " +
+                "ON seller.DepartmentId = department.Id " +
+                "ORDER BY Name";
+
+        try (PreparedStatement preparedStatement = CONNECTION.prepareStatement(sql)) {
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Department dep = map.get(resultSet.getInt("DepartmentId"));
+
+                if (dep == null) {
+                    dep = instantiateDepartment(resultSet);
+                    map.put(resultSet.getInt("DepartmentId"), dep);
+                }
+
+                seller = instantiateSeller(resultSet, dep);
+                listaSeller.add(seller);
+            }
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            fecharResultSet(resultSet);
+        }
+
+        return listaSeller;
     }
 
     @Override
@@ -80,10 +111,10 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
 
         Seller seller;
 
-        String sql = "SELECT seller.*,department.Name as DepName \n" +
-                "FROM seller INNER JOIN department \n" +
-                "ON seller.DepartmentId = department.Id\n" +
-                "WHERE DepartmentId = ?\n" +
+        String sql = "SELECT seller.*,department.Name as DepName " +
+                "FROM seller INNER JOIN department " +
+                "ON seller.DepartmentId = department.Id " +
+                "WHERE DepartmentId = ? " +
                 "ORDER BY Name";
 
         try (PreparedStatement preparedStatement = CONNECTION.prepareStatement(sql)) {
@@ -97,7 +128,7 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
                     map.put(resultSet.getInt("DepartmentId"), dep);
                 }
 
-                seller = instantiateSeller(resultSet, department);
+                seller = instantiateSeller(resultSet, dep);
                 listaSeller.add(seller);
             }
         } catch (SQLException e) {

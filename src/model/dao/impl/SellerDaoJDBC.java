@@ -106,7 +106,7 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
                 "WHERE seller.Id = ?";
 
         try (PreparedStatement preparedStatement = CONNECTION.prepareStatement(sql)) {
-            preparedStatement.setLong(1, id);
+            preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 department = instantiateDepartment(resultSet);

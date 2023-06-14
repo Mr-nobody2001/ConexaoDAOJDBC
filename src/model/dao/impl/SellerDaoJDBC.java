@@ -1,6 +1,7 @@
 package model.dao.impl;
 
 import dao.DbException;
+import dao.DbIntegrityException;
 import db.BaseDAO;
 import model.dao.SellerDao;
 import model.entities.Department;
@@ -81,7 +82,15 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
 
     @Override
     public void deleteById(Integer id) {
+        String sql = "DELETE FROM seller \n" +
+                "WHERE Id = ?";
 
+        try (PreparedStatement preparedStatement = CONNECTION.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbIntegrityException(e.getMessage());
+        }
     }
 
     @Override

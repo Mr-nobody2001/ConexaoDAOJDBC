@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 import java.util.TreeMap;
+import java.sql.Date;
+import java.sql.Statement;
 
 public class SellerDaoJDBC extends BaseDAO implements SellerDao {
     private final Connection CONNECTION;
@@ -25,7 +27,36 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
 
     @Override
     public void insert(Seller obj) {
+        ResultSet resultSet = null;
 
+        String sql = "INSERT INTO seller\n" +
+                "(Name, Email, BirthDate, BaseSalary, DepartmentId) \n" +
+                "VALUES \n" +
+                "(?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, obj.getName());
+            preparedStatement.setString(2, obj.getEmail());
+            preparedStatement.setDate(3, Date.valueOf(obj.getBirthDate()));
+            preparedStatement.setDouble(4, obj.getBaseSalary());
+            preparedStatement.setInt(5, obj.getDepartment().getId());
+            int rows = preparedStatement.executeUpdate();
+
+            if (rows > 0) {
+                resultSet = preparedStatement.getGeneratedKeys();
+                while (resultSet.next()) {
+                    int key = resultSet.getInt(1);
+                    obj.setId(key);
+                }
+            } else {
+                throw new DbException("Unexpected error! No rows affected!");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            fecharResultSet(resultSet);
+        }
     }
 
     @Override
@@ -34,12 +65,12 @@ public class SellerDaoJDBC extends BaseDAO implements SellerDao {
     }
 
     @Override
-    public void deleteByid(Integer id) {
+    public void deleteById(Integer id) {
 
     }
 
     @Override
-    public Seller finByid(Integer id) {
+    public Seller findById(Integer id) {
         ResultSet resultSet = null;
 
         Department department;
